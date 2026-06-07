@@ -1,394 +1,478 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RS-YAPO CPU Inference Web Interface</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-        h1 {
-            color: #1e293b;
-            font-size: 24px;
-            margin-top: 0;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
-        }
-        .section {
-            margin-bottom: 25px;
-        }
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #475569;
-        }
-        .file-upload-box {
-            border: 2px dashed #cbd5e1;
-            padding: 30px;
-            text-align: center;
-            border-radius: 8px;
-            background: #f8fafc;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-        .file-upload-box:hover {
-            border-color: #3b82f6;
-        }
-        .file-upload-box input {
-            display: none;
-        }
-        .info-box {
-            background-color: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e3a8a;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: monospace;
-            white-space: pre-wrap;
-            margin-top: 15px;
-            display: none;
-        }
-        textarea {
-            width: 100%;
-            height: 120px;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 15px;
-            box-sizing: border-box;
-            resize: vertical;
-        }
-        .control-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-        .control-group {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-        }
-        .control-group input {
-            width: 100%;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 6px;
-            cursor: pointer;
-            width: 100%;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #1d4ed8;
-        }
-        button:disabled {
-            background-color: #94a3b8;
-            cursor: not-allowed;
-        }
-        .result-box {
-            background: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 20px;
-            min-height: 150px;
-            white-space: pre-wrap;
-            font-size: 16px;
-            line-height: 1.5;
-            margin-top: 10px;
-        }
-        .stats-box {
-            margin-top: 15px;
-            background: #f8fafc;
-            border: 1px dashed #cbd5e1;
-            border-radius: 8px;
-            padding: 15px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #334155;
-        }
-        .prompt-vertical-container {
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            max-height: 150px;
-            gap: 6px;
-            padding: 10px;
-            background-color: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            margin-top: 6px;
-            margin-bottom: 20px;
-            scrollbar-width: thin;
-        }
-        .prompt-vertical-container::-webkit-scrollbar {
-            width: 6px;
-        }
-        .prompt-vertical-container::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-        .prompt-vertical-container::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-        .prompt-row-button {
-            display: block;
-            width: 100%;
-            background-color: #ffffff;
-            border: 1px solid #e2e8f0;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            text-align: left;
-            color: #334155;
-            cursor: pointer;
-            transition: background-color 0.15s, border-color 0.15s;
-            box-sizing: border-box;
-            font-weight: 500;
-        }
-        .prompt-row-button:hover {
-            background-color: #eff6ff;
-            border-color: #bfdbfe;
-            color: #1e40af;
-        }
-    </style>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>RS-YAPO CPU Inference Web Interface</title>
+        <style>
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                    "Helvetica Neue", Arial, sans-serif;
+                background-color: #f4f6f9;
+                color: #333;
+                margin: 0;
+                padding: 20px;
+            }
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: white;
+                padding: 30px;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+            h1 {
+                color: #1e293b;
+                font-size: 24px;
+                margin-top: 0;
+                border-bottom: 2px solid #e2e8f0;
+                padding-bottom: 10px;
+            }
+            .section {
+                margin-bottom: 25px;
+            }
+            label {
+                display: block;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #475569;
+            }
+            .file-upload-box {
+                border: 2px dashed #cbd5e1;
+                padding: 30px;
+                text-align: center;
+                border-radius: 8px;
+                background: #f8fafc;
+                cursor: pointer;
+                transition: border-color 0.2s;
+            }
+            .file-upload-box:hover {
+                border-color: #3b82f6;
+            }
+            .file-upload-box input {
+                display: none;
+            }
+            .info-box {
+                background-color: #eff6ff;
+                border: 1px solid #bfdbfe;
+                color: #1e3a8a;
+                padding: 15px;
+                border-radius: 8px;
+                font-family: monospace;
+                white-space: pre-wrap;
+                margin-top: 15px;
+                display: none;
+            }
+            textarea {
+                width: 100%;
+                height: 120px;
+                padding: 12px;
+                border: 1px solid #cbd5e1;
+                border-radius: 6px;
+                font-size: 15px;
+                box-sizing: border-box;
+                resize: vertical;
+            }
+            .control-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin-bottom: 20px;
+            }
+            .control-group {
+                background: #f8fafc;
+                padding: 12px;
+                border-radius: 6px;
+                border: 1px solid #e2e8f0;
+            }
+            .control-group input {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            button {
+                background-color: #2563eb;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                font-size: 16px;
+                font-weight: 600;
+                border-radius: 6px;
+                cursor: pointer;
+                width: 100%;
+                transition: background-color 0.2s;
+            }
+            button:hover {
+                background-color: #1d4ed8;
+            }
+            button:disabled {
+                background-color: #94a3b8;
+                cursor: not-allowed;
+            }
+            .result-box {
+                background: #f1f5f9;
+                border: 1px solid #e2e8f0;
+                border-radius: 8px;
+                padding: 20px;
+                min-height: 150px;
+                white-space: pre-wrap;
+                font-size: 16px;
+                line-height: 1.5;
+                margin-top: 10px;
+            }
+            .stats-box {
+                margin-top: 15px;
+                background: #f8fafc;
+                border: 1px dashed #cbd5e1;
+                border-radius: 8px;
+                padding: 15px;
+                font-size: 14px;
+                line-height: 1.6;
+                color: #334155;
+            }
+            .prompt-vertical-container {
+                display: flex;
+                flex-direction: column;
+                overflow-y: auto;
+                max-height: 150px;
+                gap: 6px;
+                padding: 10px;
+                background-color: #f8fafc;
+                border: 1px solid #cbd5e1;
+                border-radius: 8px;
+                margin-top: 6px;
+                margin-bottom: 20px;
+                scrollbar-width: thin;
+            }
+            .prompt-vertical-container::-webkit-scrollbar {
+                width: 6px;
+            }
+            .prompt-vertical-container::-webkit-scrollbar-thumb {
+                background: #cbd5e1;
+                border-radius: 3px;
+            }
+            .prompt-vertical-container::-webkit-scrollbar-thumb:hover {
+                background: #94a3b8;
+            }
+            .prompt-row-button {
+                display: block;
+                width: 100%;
+                background-color: #ffffff;
+                border: 1px solid #e2e8f0;
+                padding: 8px 12px;
+                border-radius: 6px;
+                font-size: 14px;
+                text-align: left;
+                color: #334155;
+                cursor: pointer;
+                transition:
+                    background-color 0.15s,
+                    border-color 0.15s;
+                box-sizing: border-box;
+                font-weight: 500;
+            }
+            .prompt-row-button:hover {
+                background-color: #eff6ff;
+                border-color: #bfdbfe;
+                color: #1e40af;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🪐 YAPO Web Assembly Çıkarım Arayüzü</h1>
 
-<div class="container">
-    <h1>🪐 YAPO Web Assembly Çıkarım Arayüzü</h1>
-    
-    <div class="section">
-        <label>1. Model Seçimi (.yapo)</label>
-        <div class="file-upload-box" id="drop-zone">
-            <span id="upload-prompt">Bilgisayarınızdan bir <b>.yapo</b> dosyası seçin veya sürükleyin</span>
-            <input type="file" id="model-file" accept=".yapo">
-        </div>
-        <div class="info-box" id="model-info"></div>
-    </div>
-
-    <div class="section" id="inference-controls" style="opacity: 0.5; pointer-events: none;">
-        <label>💡 Hazır Şablon Sorular:</label>
-        <div class="prompt-vertical-container" id="ready-prompts-container"></div>
-
-        <label for="prompt">2. Başlangıç Metni (Prompt)</label>
-        <textarea id="prompt" placeholder="Metin tamamlamaya başlamak için bir şeyler yazın..."></textarea>
-        
-        <div class="control-grid">
-            <div class="control-group">
-                <label for="length">Token Uzunluğu (Max 1000):</label>
-                <input type="range" id="length" min="5" max="1000" value="50" oninput="this.nextElementSibling.value = this.value">
-                <output style="font-weight: bold; display: block; margin-top: 5px;">50</output>
+            <div class="section">
+                <label>1. Model Seçimi (.yapo)</label>
+                <div class="file-upload-box" id="drop-zone">
+                    <span id="upload-prompt"
+                        >Bilgisayarınızdan bir <b>.yapo</b> dosyası seçin veya
+                        sürükleyin</span
+                    >
+                    <input type="file" id="model-file" accept=".yapo" />
+                </div>
+                <div class="info-box" id="model-info"></div>
             </div>
-            
-            <div class="control-group">
-                <label for="temp">Sıcaklık (Temperature):</label>
-                <input type="range" id="temp" min="0.0" max="2.0" step="0.05" value="0.7" oninput="this.nextElementSibling.value = this.value">
-                <output style="font-weight: bold; display: block; margin-top: 5px;">0.7</output>
+
+            <div
+                class="section"
+                id="inference-controls"
+                style="opacity: 0.5; pointer-events: none"
+            >
+                <label>💡 Hazır Şablon Sorular:</label>
+                <div
+                    class="prompt-vertical-container"
+                    id="ready-prompts-container"
+                ></div>
+
+                <label for="prompt">2. Başlangıç Metni (Prompt)</label>
+                <textarea
+                    id="prompt"
+                    placeholder="Metin tamamlamaya başlamak için bir şeyler yazın..."
+                ></textarea>
+
+                <div class="control-grid">
+                    <div class="control-group">
+                        <label for="length">Token Uzunluğu (Max 1000):</label>
+                        <input
+                            type="range"
+                            id="length"
+                            min="5"
+                            max="1000"
+                            value="1000"
+                            oninput="this.nextElementSibling.value = this.value"
+                        />
+                        <output
+                            style="
+                                font-weight: bold;
+                                display: block;
+                                margin-top: 5px;
+                            "
+                            >1000</output
+                        >
+                    </div>
+
+                    <div class="control-group">
+                        <label for="temp">Sıcaklık (Temperature):</label>
+                        <input
+                            type="range"
+                            id="temp"
+                            min="0.0"
+                            max="2.0"
+                            step="0.05"
+                            value="0.0"
+                            oninput="this.nextElementSibling.value = this.value"
+                        />
+                        <output
+                            style="
+                                font-weight: bold;
+                                display: block;
+                                margin-top: 5px;
+                            "
+                            >0.0</output
+                        >
+                    </div>
+                </div>
+
+                <button id="generate-btn" disabled>Metni Tamamla 🚀</button>
+
+                <div style="margin-top: 20px">
+                    <label>Sonuç:</label>
+                    <div class="result-box" id="result-output">
+                        Henüz bir metin üretilmedi.
+                    </div>
+                    <div
+                        class="stats-box"
+                        id="stats-output"
+                        style="display: none"
+                    ></div>
+                </div>
             </div>
         </div>
 
-        <button id="generate-btn" disabled>Metni Tamamla 🚀</button>
-        
-        <div style="margin-top: 20px;">
-            <label>Sonuç:</label>
-            <div class="result-box" id="result-output">Henüz bir metin üretilmedi.</div>
-            <div class="stats-box" id="stats-output" style="display: none;"></div>
-        </div>
-    </div>
-</div>
+        <script type="module">
+            import init, { YapoSession } from "./pkg/rs_yapo_wasm.js";
+            import { readyPrompts } from "./prompts.js";
 
-<script type="module">
-    import init, { YapoSession } from "./pkg/rs_yapo_wasm.js";
-    import { readyPrompts } from "./prompts.js";
+            let session = null;
 
-    let session = null;
+            const fileInput = document.getElementById("model-file");
+            const dropZone = document.getElementById("drop-zone");
+            const modelInfo = document.getElementById("model-info");
+            const inferenceControls =
+                document.getElementById("inference-controls");
+            const generateBtn = document.getElementById("generate-btn");
+            const resultOutput = document.getElementById("result-output");
+            const statsOutput = document.getElementById("stats-output");
+            const promptsContainer = document.getElementById(
+                "ready-prompts-container",
+            );
 
-    const fileInput = document.getElementById("model-file");
-    const dropZone = document.getElementById("drop-zone");
-    const modelInfo = document.getElementById("model-info");
-    const inferenceControls = document.getElementById("inference-controls");
-    const generateBtn = document.getElementById("generate-btn");
-    const resultOutput = document.getElementById("result-output");
-    const statsOutput = document.getElementById("stats-output");
-    const promptsContainer = document.getElementById("ready-prompts-container");
+            // Render the ready prompts from prompts.js into a clean vertically scrollable menu box
+            function renderReadyPrompts() {
+                promptsContainer.innerHTML = "";
+                readyPrompts.forEach((p) => {
+                    const btn = document.createElement("button");
+                    btn.className = "prompt-row-button";
+                    btn.innerText = "👉 " + p.title;
+                    btn.addEventListener("click", () => {
+                        document.getElementById("prompt").value = p.text;
+                    });
+                    promptsContainer.appendChild(btn);
+                });
+            }
 
-    // Render the ready prompts from prompts.js into a clean vertically scrollable menu box
-    function renderReadyPrompts() {
-        promptsContainer.innerHTML = "";
-        readyPrompts.forEach(p => {
-            const btn = document.createElement("button");
-            btn.className = "prompt-row-button";
-            btn.innerText = "👉 " + p.title;
-            btn.addEventListener("click", () => {
-                document.getElementById("prompt").value = p.text;
-            });
-            promptsContainer.appendChild(btn);
-        });
-    }
+            renderReadyPrompts();
 
-    renderReadyPrompts();
+            async function run() {
+                try {
+                    await init();
+                    console.log("WASM Modülü başarıyla yüklendi.");
 
-    async function run() {
-        try {
-            await init();
-            console.log("WASM Modülü başarıyla yüklendi.");
-            
-            // Try to auto-load main.yapo if it exists next to index.html
-            try {
-                const response = await fetch("./main.yapo");
-                if (response.ok) {
-                    console.log("main.yapo dosyası sunucuda bulundu. Otomatik yükleniyor...");
-                    const arrayBuffer = await response.arrayBuffer();
-                    const bytes = new Uint8Array(arrayBuffer);
-                    
-                    const startTime = performance.now();
-                    session = new YapoSession(bytes);
-                    const elapsed = (performance.now() - startTime).toFixed(1);
-                    
-                    modelInfo.innerText = session.get_info() + `\nYükleme Süresi: ${elapsed} ms (Otomatik Yükleme)`;
-                    modelInfo.style.display = "block";
-                    
-                    inferenceControls.style.opacity = "1";
-                    inferenceControls.style.pointerEvents = "auto";
-                    generateBtn.disabled = false;
-                    document.getElementById("upload-prompt").innerHTML = `Aktif Model: <b>main.yapo (Otomatik)</b>`;
-                } else {
-                    console.log("main.yapo dosyası bulunamadı. Manuel model yükleme bekleniyor.");
+                    // Try to auto-load main.yapo if it exists next to index.html
+                    try {
+                        const response = await fetch("./main.yapo");
+                        if (response.ok) {
+                            console.log(
+                                "main.yapo dosyası sunucuda bulundu. Otomatik yükleniyor...",
+                            );
+                            const arrayBuffer = await response.arrayBuffer();
+                            const bytes = new Uint8Array(arrayBuffer);
+
+                            const startTime = performance.now();
+                            session = new YapoSession(bytes);
+                            const elapsed = (
+                                performance.now() - startTime
+                            ).toFixed(1);
+
+                            modelInfo.innerText =
+                                session.get_info() +
+                                `\nYükleme Süresi: ${elapsed} ms (Otomatik Yükleme)`;
+                            modelInfo.style.display = "block";
+
+                            inferenceControls.style.opacity = "1";
+                            inferenceControls.style.pointerEvents = "auto";
+                            generateBtn.disabled = false;
+                            document.getElementById("upload-prompt").innerHTML =
+                                `Aktif Model: <b>main.yapo (Otomatik)</b>`;
+                        } else {
+                            console.log(
+                                "main.yapo dosyası bulunamadı. Manuel model yükleme bekleniyor.",
+                            );
+                        }
+                    } catch (err) {
+                        console.log(
+                            "main.yapo otomatik yükleme kontrolü atlandı:",
+                            err,
+                        );
+                    }
+                } catch (e) {
+                    console.error("WASM başlatılamadı:", e);
                 }
-            } catch (err) {
-                console.log("main.yapo otomatik yükleme kontrolü atlandı:", err);
             }
-        } catch (e) {
-            console.error("WASM başlatılamadı:", e);
-        }
-    }
 
-    run();
+            run();
 
-    dropZone.addEventListener("click", () => fileInput.click());
-    
-    dropZone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = "#3b82f6";
-    });
+            dropZone.addEventListener("click", () => fileInput.click());
 
-    dropZone.addEventListener("dragleave", () => {
-        dropZone.style.borderColor = "#cbd5e1";
-    });
+            dropZone.addEventListener("dragover", (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = "#3b82f6";
+            });
 
-    dropZone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = "#cbd5e1";
-        if (e.dataTransfer.files.length > 0) {
-            fileInput.files = e.dataTransfer.files;
-            handleFileSelect();
-        }
-    });
+            dropZone.addEventListener("dragleave", () => {
+                dropZone.style.borderColor = "#cbd5e1";
+            });
 
-    fileInput.addEventListener("change", handleFileSelect);
+            dropZone.addEventListener("drop", (e) => {
+                e.preventDefault();
+                dropZone.style.borderColor = "#cbd5e1";
+                if (e.dataTransfer.files.length > 0) {
+                    fileInput.files = e.dataTransfer.files;
+                    handleFileSelect();
+                }
+            });
 
-    async function handleFileSelect() {
-        const file = fileInput.files[0];
-        if (!file) return;
+            fileInput.addEventListener("change", handleFileSelect);
 
-        document.getElementById("upload-prompt").innerHTML = `Yükleniyor: <b>${file.name}</b>`;
-        modelInfo.style.display = "none";
-        inferenceControls.style.opacity = "0.5";
-        inferenceControls.style.pointerEvents = "none";
-        generateBtn.disabled = true;
+            async function handleFileSelect() {
+                const file = fileInput.files[0];
+                if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = async function(e) {
-            const arrayBuffer = e.target.result;
-            const bytes = new Uint8Array(arrayBuffer);
-            
-            try {
-                const startTime = performance.now();
-                session = new YapoSession(bytes);
-                const elapsed = (performance.now() - startTime).toFixed(1);
-                
-                modelInfo.innerText = session.get_info() + `\nYükleme Süresi: ${elapsed} ms`;
-                modelInfo.style.display = "block";
-                
-                inferenceControls.style.opacity = "1";
-                inferenceControls.style.pointerEvents = "auto";
-                generateBtn.disabled = false;
-                document.getElementById("upload-prompt").innerHTML = `Aktif Model: <b>${file.name}</b>`;
-            } catch (error) {
-                alert("Model yüklenirken bir hata oluştu: " + error);
-                document.getElementById("upload-prompt").innerText = "Bilgisayarınızdan bir .yapo dosyası seçin veya sürükleyin";
+                document.getElementById("upload-prompt").innerHTML =
+                    `Yükleniyor: <b>${file.name}</b>`;
+                modelInfo.style.display = "none";
+                inferenceControls.style.opacity = "0.5";
+                inferenceControls.style.pointerEvents = "none";
+                generateBtn.disabled = true;
+
+                const reader = new FileReader();
+                reader.onload = async function (e) {
+                    const arrayBuffer = e.target.result;
+                    const bytes = new Uint8Array(arrayBuffer);
+
+                    try {
+                        const startTime = performance.now();
+                        session = new YapoSession(bytes);
+                        const elapsed = (performance.now() - startTime).toFixed(
+                            1,
+                        );
+
+                        modelInfo.innerText =
+                            session.get_info() +
+                            `\nYükleme Süresi: ${elapsed} ms`;
+                        modelInfo.style.display = "block";
+
+                        inferenceControls.style.opacity = "1";
+                        inferenceControls.style.pointerEvents = "auto";
+                        generateBtn.disabled = false;
+                        document.getElementById("upload-prompt").innerHTML =
+                            `Aktif Model: <b>${file.name}</b>`;
+                    } catch (error) {
+                        alert("Model yüklenirken bir hata oluştu: " + error);
+                        document.getElementById("upload-prompt").innerText =
+                            "Bilgisayarınızdan bir .yapo dosyası seçin veya sürükleyin";
+                    }
+                };
+                reader.readAsArrayBuffer(file);
             }
-        };
-        reader.readAsArrayBuffer(file);
-    }
 
-    generateBtn.addEventListener("click", () => {
-        if (!session) return;
-        
-        const promptInput = document.getElementById("prompt").value;
-        const length = parseInt(document.getElementById("length").value);
-        const temp = parseFloat(document.getElementById("temp").value);
+            generateBtn.addEventListener("click", () => {
+                if (!session) return;
 
-        // Apply template wrapping purely on HTML/JS side matching the precise training layout (no trailing space after <|bot|>)
-        const trimmed = promptInput.trim();
-        const formattedPrompt = (trimmed.startsWith("<|user|>") || trimmed.startsWith("<|system|>"))
-            ? trimmed
-            : `<|user|> ${trimmed} <|end|> <|bot|>`; // Removed trailing space after <|bot|> to ensure exact BPE matching!
+                const promptInput = document.getElementById("prompt").value;
+                const length = parseInt(
+                    document.getElementById("length").value,
+                );
+                const temp = parseFloat(document.getElementById("temp").value);
 
-        // Send formatted prompt to JS console for F12 verification
-        console.log("[JS LOG] Formatted prompt sent to WASM:\n" + formattedPrompt);
+                // Apply template wrapping purely on HTML/JS side matching the precise training layout (no trailing space after <|bot|>)
+                const trimmed = promptInput.trim();
+                const formattedPrompt =
+                    trimmed.startsWith("<|user|>") ||
+                    trimmed.startsWith("<|system|>")
+                        ? trimmed
+                        : `<|user|> ${trimmed} <|end|> <|bot|>`; // Removed trailing space after <|bot|> to ensure exact BPE matching!
 
-        generateBtn.disabled = true;
-        resultOutput.innerText = "...";
-        statsOutput.style.display = "none";
+                // Send formatted prompt to JS console for F12 verification
+                console.log(
+                    "[JS LOG] Formatted prompt sent to WASM:\n" +
+                        formattedPrompt,
+                );
 
-        setTimeout(() => {
-            try {
-                const responseStr = session.generate(formattedPrompt, length, temp);
-                const response = JSON.parse(responseStr);
-                
-                // Display user's raw input prompt + generated response text (bypassing raw tags)
-                resultOutput.innerText = promptInput + "\n" + response.text.trim();
-                
-                statsOutput.innerHTML = `
+                generateBtn.disabled = true;
+                resultOutput.innerText = "...";
+                statsOutput.style.display = "none";
+
+                setTimeout(() => {
+                    try {
+                        const responseStr = session.generate(
+                            formattedPrompt,
+                            length,
+                            temp,
+                        );
+                        const response = JSON.parse(responseStr);
+
+                        // Display user's raw input prompt + generated response text (bypassing raw tags)
+                        resultOutput.innerText =
+                            promptInput + "\n" + response.text.trim();
+
+                        statsOutput.innerHTML = `
                     <b>📈 Üretim İstatistikleri:</b><br>
                     • Üretilen Toplam Token: <b>${response.tokens_generated}</b><br>
                     • Toplam Süre: <b>${response.elapsed_ms.toFixed(1)} ms</b><br>
                     • Hız: <b>${response.tokens_per_second.toFixed(1)} token/sn</b><br>
                     • Token Başına Ortalama Süre: <b>${response.ms_per_token.toFixed(1)} ms</b>
                 `;
-                statsOutput.style.display = "block";
-            } catch (error) {
-                resultOutput.innerText = "Hata oluştu: " + error;
-                statsOutput.style.display = "none";
-            } finally {
-                generateBtn.disabled = false;
-            }
-        }, 50);
-    });
-</script>
-
-</body>
+                        statsOutput.style.display = "block";
+                    } catch (error) {
+                        resultOutput.innerText = "Hata oluştu: " + error;
+                        statsOutput.style.display = "none";
+                    } finally {
+                        generateBtn.disabled = false;
+                    }
+                }, 50);
+            });
+        </script>
+    </body>
 </html>
